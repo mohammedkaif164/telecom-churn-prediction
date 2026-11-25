@@ -1,0 +1,454 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Churn Prediction</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: auto;
+            background: white;
+            padding: 35px;
+            border-radius: 14px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            text-align: center;
+            color: #172554;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-size: 19px;
+            margin: 25px 0 18px;
+            color: #1e40af;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .field label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            background: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 30px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        button:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+
+        }
+
+        #result {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+
+        #prediction {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .yes {
+            color: #dc2626;
+        }
+
+        .no {
+            color: #16a34a;
+        }
+
+        .probability {
+            font-size: 19px;
+            color: #334155;
+        }
+
+        .error {
+            color: #dc2626;
+            margin-top: 15px;
+        }
+
+        @media(max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Customer Churn Prediction</h1>
+
+    <p class="subtitle">
+        Select customer information to predict whether the customer will churn.
+    </p>
+
+    <form id="churnForm">
+
+        <h2>Customer Information</h2>
+
+        <div class="form-grid">
+
+            <div class="field">
+                <label>Gender</label>
+                <select id="gender">
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Other</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Age</label>
+                <select id="age"></select>
+            </div>
+
+            <div class="field">
+                <label>Contract Type</label>
+                <select id="contract_type">
+                    <option>Month-to-month</option>
+                    <option>One year</option>
+                    <option>Two year</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Tenure (Months)</label>
+                <select id="tenure_months"></select>
+            </div>
+
+            <div class="field">
+                <label>Internet Service</label>
+                <select id="internet_service">
+                    <option>DSL</option>
+                    <option>Fiber optic</option>
+                    <option>No</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Tech Support</label>
+                <select id="tech_support">
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>No internet service</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Online Security</label>
+                <select id="online_security">
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>No internet service</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Paperless Billing</label>
+                <select id="paperless_billing">
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Payment Method</label>
+                <select id="payment_method">
+                    <option>Bank transfer</option>
+                    <option>Electronic check</option>
+                    <option>Mailed check</option>
+                    <option>Credit card</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Monthly Charges</label>
+                <select id="monthly_charges"></select>
+            </div>
+
+            <div class="field">
+                <label>Total Charges</label>
+                <select id="total_charges"></select>
+            </div>
+
+            <div class="field">
+                <label>Average Monthly GB</label>
+                <select id="avg_monthly_gb"></select>
+            </div>
+
+            <div class="field">
+                <label>Average Call Minutes</label>
+                <select id="avg_call_minutes"></select>
+            </div>
+
+            <div class="field">
+                <label>Number of Support Tickets</label>
+                <select id="num_support_tickets"></select>
+            </div>
+
+            <div class="field">
+                <label>Late Payments</label>
+                <select id="late_payments"></select>
+            </div>
+
+        </div>
+
+        <button type="submit" id="predictBtn">
+            Predict Churn
+        </button>
+
+    </form>
+
+    <div id="error" class="error"></div>
+
+    <div id="result">
+
+        <h2>Prediction Result</h2>
+
+        <p>Customer Churn Status</p>
+
+        <div id="prediction"></div>
+
+        <div class="probability">
+            Churn Probability:
+            <strong id="probability"></strong>
+        </div>
+
+        <p id="explanation"></p>
+
+    </div>
+
+</div>
+
+<script>
+
+    // Generate dropdown options for numerical features
+    function fillDropdown(id, min, max, step) {
+
+        const dropdown = document.getElementById(id);
+
+        for (let value = min; value <= max; value += step) {
+
+            const option = document.createElement("option");
+
+            option.value = value;
+            option.textContent = value;
+
+            dropdown.appendChild(option);
+        }
+    }
+
+    // Numerical feature options
+    fillDropdown("age", 18, 100, 1);
+
+    fillDropdown("tenure_months", 0, 72, 1);
+
+    fillDropdown("monthly_charges", 1, 200, 1);
+
+    fillDropdown("total_charges", 0, 20000, 100);
+
+    fillDropdown("avg_monthly_gb", 0, 2000, 10);
+
+    fillDropdown("avg_call_minutes", 0, 1500, 10);
+
+    fillDropdown("num_support_tickets", 0, 10, 1);
+
+    fillDropdown("late_payments", 0, 20, 1);
+
+
+    // Get all selected customer information
+    function getCustomerData() {
+
+        return {
+
+            gender: document.getElementById("gender").value,
+
+            age: Number(document.getElementById("age").value),
+
+            contract_type: document.getElementById("contract_type").value,
+
+            tenure_months: Number(document.getElementById("tenure_months").value),
+
+            internet_service: document.getElementById("internet_service").value,
+
+            tech_support: document.getElementById("tech_support").value,
+
+            online_security: document.getElementById("online_security").value,
+
+            paperless_billing: document.getElementById("paperless_billing").value,
+
+            payment_method: document.getElementById("payment_method").value,
+
+            monthly_charges: Number(document.getElementById("monthly_charges").value),
+
+            total_charges: Number(document.getElementById("total_charges").value),
+
+            avg_monthly_gb: Number(document.getElementById("avg_monthly_gb").value),
+
+            avg_call_minutes: Number(document.getElementById("avg_call_minutes").value),
+
+            num_support_tickets: Number(document.getElementById("num_support_tickets").value),
+
+            late_payments: Number(document.getElementById("late_payments").value)
+
+        };
+    }
+
+
+    // Send customer information to FastAPI
+    document.getElementById("churnForm").addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const button = document.getElementById("predictBtn");
+
+        const result = document.getElementById("result");
+
+        const error = document.getElementById("error");
+
+        result.style.display = "none";
+        error.textContent = "";
+
+        button.disabled = true;
+        button.textContent = "Predicting...";
+
+        try {
+
+            const customerData = getCustomerData();
+
+            const response = await fetch("/predict", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(customerData)
+
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+
+                const details = data.problems
+                    ? Object.entries(data.problems)
+                        .map(([field, message]) => `${field}: ${message}`)
+                        .join(", ")
+                    : data.detail || data.error || "Prediction failed.";
+
+                throw new Error(details);
+            }
+
+            // Display prediction
+            const prediction = document.getElementById("prediction");
+
+            prediction.textContent = data.prediction;
+
+            prediction.className = data.prediction === "Yes"
+                ? "yes"
+                : "no";
+
+            // Display explanation
+            document.getElementById("explanation").textContent =
+                data.prediction === "Yes"
+                ? "This customer is predicted to churn."
+                : "This customer is predicted to stay.";
+
+            result.style.display = "block";
+
+        }
+
+        catch (err) {
+
+            error.textContent = "Error: " + err.message;
+
+        }
+
+        finally {
+
+            button.disabled = false;
+            button.textContent = "Predict Churn";
+
+        }
+
+    });
+
+</script>
+
+</body>
+</html>

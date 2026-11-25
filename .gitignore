@@ -1,0 +1,22 @@
+
+# Python virtual environments
+my_api/.venv/
+my_api/venv/
+
+# Python cache
+__pycache__/
+my_api/__pycache__/
+my_api/_pycache/
+
+# VS Code settings
+my_api/.vscode/
+
+# Environment variables and secrets
+.env
+*.env
+
+# Python temporary files
+*.pyc
+
+# Jupyter temporary files
+.ipynb_checkpoints/
