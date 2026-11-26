@@ -13,7 +13,7 @@ with open("churn_model.pkl", "rb") as f:
     model = pickle.load(f)
 with open("churn_meta.pkl", "rb") as f:
     meta = pickle.load(f)
-
+print("hi")
 threshold = meta["threshold"]
 features = meta["features"]
 
